@@ -1,0 +1,1534 @@
+{
+	"info": {
+		"_postman_id": "4dae4653-cad4-40e1-a9f9-595230e39a05",
+		"name": "VaultN Trello Automation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39659853"
+	},
+	"item": [
+		{
+			"name": "Create Board",
+			"item": [
+				{
+					"name": "Create Board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"boardId\", pm.response.json().id);\r",
+									"\r",
+									"// Check the HTTP response status\r",
+									"pm.test(\"Request sent successfully (HTTP 200)\", function () {\r",
+									"    pm.response.to.have.status(200); // Ensure response status is 200\r",
+									"});\r",
+									"\r",
+									"// Parse the JSON response\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the list was successfully created\r",
+									"if (jsonData.id) {\r",
+									"    console.log(\"The list was created successfully. List ID: \" + jsonData.id);\r",
+									"    pm.test(\"The list was created successfully\", function () {\r",
+									"        pm.expect(jsonData.name).to.exist; // Ensure the list has a name\r",
+									"        console.log(\"Created List Name: \" + jsonData.name);\r",
+									"    });\r",
+									"} else {\r",
+									"    // If the list was not created, log the error message\r",
+									"    console.error(\"Failed to create the list. Response: \", jsonData);\r",
+									"    pm.test(\"List creation failed\", function () {\r",
+									"        pm.expect(jsonData.id).to.not.exist; // Ensure no ID exists in a failed response\r",
+									"    });\r",
+									"    // If there is an error message in the response, log it\r",
+									"    if (jsonData.message) {\r",
+									"        console.error(\"Error Message: \" + jsonData.message);\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/boards/?name=VaultN&key={{apiKey}}&token={{apiToken}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"boards",
+								""
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "VaultN"
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create Lists",
+			"item": [
+				{
+					"name": "Create Lists \"Backlog\"",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"BacklogListId\", pm.response.json().id);\r",
+									"\r",
+									"// Check HTTP response status\r",
+									"pm.test(\"Request sent successfully (HTTP 200)\", function () {\r",
+									"    pm.response.to.have.status(200); // Ensure response status is 200\r",
+									"});\r",
+									"\r",
+									"// Parse the JSON response\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the list was successfully created\r",
+									"if (jsonData.id) {\r",
+									"    console.log(\"List created successfully. List ID: \" + jsonData.id);\r",
+									"    pm.test(\"List was created successfully\", function () {\r",
+									"        pm.expect(jsonData.name).to.exist; // Ensure the list has a name\r",
+									"        console.log(\"List Name: \" + jsonData.name);\r",
+									"    });\r",
+									"} else {\r",
+									"    // If the list was not created, log the error message\r",
+									"    console.error(\"Failed to create the list. Response: \", jsonData);\r",
+									"    pm.test(\"List creation failed\", function () {\r",
+									"        pm.expect(jsonData.id).to.not.exist; // Ensure no ID exists for failed response\r",
+									"    });\r",
+									"    // If there is a message in the response, log it\r",
+									"    if (jsonData.message) {\r",
+									"        console.error(\"Error Message: \" + jsonData.message);\r",
+									"    }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"defaultLists\": false\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/lists?name=Backlog&idBoard={{boardId}}&key={{apiKey}}&token={{apiToken}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"lists"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Backlog"
+								},
+								{
+									"key": "idBoard",
+									"value": "{{boardId}}",
+									"description": "\"Create Board\" isteğinden gelen boardId."
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								},
+								{
+									"key": "defaultLists",
+									"value": "false",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Lists \"ToDO\"",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"ToDoListId\", pm.response.json().id);\r",
+									"\r",
+									"// Check HTTP response status\r",
+									"pm.test(\"Request sent successfully (HTTP 200)\", function () {\r",
+									"    pm.response.to.have.status(200); // Ensure response status is 200\r",
+									"});\r",
+									"\r",
+									"// Parse the JSON response\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the list was successfully created\r",
+									"if (jsonData.id) {\r",
+									"    console.log(\"List created successfully. List ID: \" + jsonData.id);\r",
+									"    pm.test(\"List was created successfully\", function () {\r",
+									"        pm.expect(jsonData.name).to.exist; // Ensure the list has a name\r",
+									"        console.log(\"List Name: \" + jsonData.name);\r",
+									"    });\r",
+									"} else {\r",
+									"    // If the list was not created, log the error message\r",
+									"    console.error(\"Failed to create the list. Response: \", jsonData);\r",
+									"    pm.test(\"List creation failed\", function () {\r",
+									"        pm.expect(jsonData.id).to.not.exist; // Ensure no ID exists for failed response\r",
+									"    });\r",
+									"    // If there is a message in the response, log it\r",
+									"    if (jsonData.message) {\r",
+									"        console.error(\"Error Message: \" + jsonData.message);\r",
+									"    }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"defaultLists\": false\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/lists?name=Todo&idBoard={{boardId}}&key={{apiKey}}&token={{apiToken}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"lists"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Todo"
+								},
+								{
+									"key": "idBoard",
+									"value": "{{boardId}}",
+									"description": "\"Create Board\" isteğinden gelen boardId."
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								},
+								{
+									"key": "defaultLists",
+									"value": "false",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Lists \"Doing\"",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"DoingListId\", pm.response.json().id);\r",
+									"\r",
+									"// Check HTTP response status\r",
+									"pm.test(\"Request sent successfully (HTTP 200)\", function () {\r",
+									"    pm.response.to.have.status(200); // Ensure response status is 200\r",
+									"});\r",
+									"\r",
+									"// Parse the JSON response\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the list was successfully created\r",
+									"if (jsonData.id) {\r",
+									"    console.log(\"List created successfully. List ID: \" + jsonData.id);\r",
+									"    pm.test(\"List was created successfully\", function () {\r",
+									"        pm.expect(jsonData.name).to.exist; // Ensure the list has a name\r",
+									"        console.log(\"List Name: \" + jsonData.name);\r",
+									"    });\r",
+									"} else {\r",
+									"    // If the list was not created, log the error message\r",
+									"    console.error(\"Failed to create the list. Response: \", jsonData);\r",
+									"    pm.test(\"List creation failed\", function () {\r",
+									"        pm.expect(jsonData.id).to.not.exist; // Ensure no ID exists for failed response\r",
+									"    });\r",
+									"    // If there is a message in the response, log it\r",
+									"    if (jsonData.message) {\r",
+									"        console.error(\"Error Message: \" + jsonData.message);\r",
+									"    }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"defaultLists\": false\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/lists?name=Doing&idBoard={{boardId}}&key={{apiKey}}&token={{apiToken}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"lists"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Doing"
+								},
+								{
+									"key": "idBoard",
+									"value": "{{boardId}}",
+									"description": "\"Create Board\" isteğinden gelen boardId."
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								},
+								{
+									"key": "defaultLists",
+									"value": "false",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Lists \"Testing\"",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"TestingListId\", pm.response.json().id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"defaultLists\": false\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/lists?name=Testing&idBoard={{boardId}}&key={{apiKey}}&token={{apiToken}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"lists"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Testing"
+								},
+								{
+									"key": "idBoard",
+									"value": "{{boardId}}",
+									"description": "\"Create Board\" isteğinden gelen boardId."
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								},
+								{
+									"key": "defaultLists",
+									"value": "false",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Lists Done",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"DoneListId\", pm.response.json().id);\r",
+									"\r",
+									"// Check HTTP response status\r",
+									"pm.test(\"Request sent successfully (HTTP 200)\", function () {\r",
+									"    pm.response.to.have.status(200); // Ensure response status is 200\r",
+									"});\r",
+									"\r",
+									"// Parse the JSON response\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the list was successfully created\r",
+									"if (jsonData.id) {\r",
+									"    console.log(\"List created successfully. List ID: \" + jsonData.id);\r",
+									"    pm.test(\"List was created successfully\", function () {\r",
+									"        pm.expect(jsonData.name).to.exist; // Ensure the list has a name\r",
+									"        console.log(\"List Name: \" + jsonData.name);\r",
+									"    });\r",
+									"} else {\r",
+									"    // If the list was not created, log the error message\r",
+									"    console.error(\"Failed to create the list. Response: \", jsonData);\r",
+									"    pm.test(\"List creation failed\", function () {\r",
+									"        pm.expect(jsonData.id).to.not.exist; // Ensure no ID exists for failed response\r",
+									"    });\r",
+									"    // If there is a message in the response, log it\r",
+									"    if (jsonData.message) {\r",
+									"        console.error(\"Error Message: \" + jsonData.message);\r",
+									"    }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"defaultLists\": false\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/lists?name=Done&idBoard={{boardId}}&key={{apiKey}}&token={{apiToken}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"lists"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Done"
+								},
+								{
+									"key": "idBoard",
+									"value": "{{boardId}}",
+									"description": "\"Create Board\" isteğinden gelen boardId."
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								},
+								{
+									"key": "defaultLists",
+									"value": "false",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Add Card to Lists",
+			"item": [
+				{
+					"name": "\"Sign up for Trello\" in Todo",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"SignUpCardId\", pm.response.json().id);\r",
+									"\r",
+									"// Check the HTTP response status\r",
+									"pm.test(\"Request sent successfully (HTTP 200)\", function () {\r",
+									"    pm.response.to.have.status(200); // Ensure response status is 200\r",
+									"});\r",
+									"\r",
+									"// Parse the JSON response\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the card was successfully created\r",
+									"if (jsonData.id) {\r",
+									"    console.log(\"The card was created successfully. Card ID: \" + jsonData.id);\r",
+									"    pm.test(\"The card was created successfully\", function () {\r",
+									"        pm.expect(jsonData.name).to.exist; // Ensure the card has a name\r",
+									"        console.log(\"Created Card Name: \" + jsonData.name);\r",
+									"    });\r",
+									"} else {\r",
+									"    // If the card was not created, log the error message\r",
+									"    console.error(\"Failed to create the card. Response: \", jsonData);\r",
+									"    pm.test(\"Card creation failed\", function () {\r",
+									"        pm.expect(jsonData.id).to.not.exist; // Ensure no ID exists in a failed response\r",
+									"    });\r",
+									"    // If there is an error message in the response, log it\r",
+									"    if (jsonData.message) {\r",
+									"        console.error(\"Error Message: \" + jsonData.message);\r",
+									"    }\r",
+									"    if (jsonData.error) {\r",
+									"        console.error(\"Error Details: \" + jsonData.error);\r",
+									"    }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/cards?name=\"Sign up for Trello\"\n&idList={{ToDoListId}}&key={{apiKey}}&token={{apiToken}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"cards"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "\"Sign up for Trello\"\n"
+								},
+								{
+									"key": "idList",
+									"value": "{{ToDoListId}}"
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "\"Get key and token\" in Todo",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"GetKeyCardId\", pm.response.json().id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/cards?name=\"Get key and token\"&idList={{ToDoListId}}&key={{apiKey}}&token={{apiToken}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"cards"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "\"Get key and token\""
+								},
+								{
+									"key": "idList",
+									"value": "{{ToDoListId}}"
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "\"Build a collection\" in Todo",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"BuıildCollectionId\", pm.response.json().id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/cards?name=\"Build a collection\"&idList={{ToDoListId}}&key={{apiKey}}&token={{apiToken}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"cards"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "\"Build a collection\""
+								},
+								{
+									"key": "idList",
+									"value": "{{ToDoListId}}"
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "\"Working on Task \" in Todo",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/cards?name=\"Working on Task\"&idList={{ToDoListId}}&key={{apiKey}}&token={{apiToken}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"cards"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "\"Working on Task\""
+								},
+								{
+									"key": "idList",
+									"value": "{{ToDoListId}}"
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "\"UI Automation\" in Backlog",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/cards?name=\"Sign up for Trello\"\n&idList={{ToDoListId}}&key={{apiKey}}&token={{apiToken}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"cards"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "\"Sign up for Trello\"\n"
+								},
+								{
+									"key": "idList",
+									"value": "{{ToDoListId}}"
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "\"Writing Test Sceneraios\" in Backlog",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"WorkingTestScenariosCardId\", pm.response.json().id);\r",
+									"\r",
+									"// Check the HTTP response status\r",
+									"pm.test(\"Request sent successfully (HTTP 200)\", function () {\r",
+									"    pm.response.to.have.status(200); // Ensure response status is 200\r",
+									"});\r",
+									"\r",
+									"// Parse the JSON response\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the card was successfully created\r",
+									"if (jsonData.id) {\r",
+									"    console.log(\"The card was created successfully. Card ID: \" + jsonData.id);\r",
+									"    pm.test(\"The card was created successfully\", function () {\r",
+									"        pm.expect(jsonData.name).to.exist; // Ensure the card has a name\r",
+									"        console.log(\"Created Card Name: \" + jsonData.name);\r",
+									"    });\r",
+									"} else {\r",
+									"    // If the card was not created, log the error message\r",
+									"    console.error(\"Failed to create the card. Response: \", jsonData);\r",
+									"    pm.test(\"Card creation failed\", function () {\r",
+									"        pm.expect(jsonData.id).to.not.exist; // Ensure no ID exists in a failed response\r",
+									"    });\r",
+									"    // If there is an error message in the response, log it\r",
+									"    if (jsonData.message) {\r",
+									"        console.error(\"Error Message: \" + jsonData.message);\r",
+									"    }\r",
+									"    if (jsonData.error) {\r",
+									"        console.error(\"Error Details: \" + jsonData.error);\r",
+									"    }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/cards?name=\"Writing Test Sceneraios\"&idList={{BacklogListId}}&key={{apiKey}}&token={{apiToken}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"cards"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "\"Writing Test Sceneraios\""
+								},
+								{
+									"key": "idList",
+									"value": "{{BacklogListId}}"
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Move Card",
+			"item": [
+				{
+					"name": "\"Sign up for Trello\" to Done",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"SignUpCard\", pm.response.json().id);\r",
+									"\r",
+									"// Check the HTTP response status\r",
+									"pm.test(\"Request sent successfully (HTTP 200)\", function () {\r",
+									"    pm.response.to.have.status(200); // Ensure the response status is 200\r",
+									"});\r",
+									"\r",
+									"// Parse the JSON response\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the card was successfully moved\r",
+									"if (pm.response.code === 200 && jsonData.idList) {\r",
+									"    console.log(\"The card was moved successfully.\");\r",
+									"    pm.test(\"The card was moved successfully\", function () {\r",
+									"        pm.expect(jsonData.idList).to.exist; // Ensure the new list ID exists\r",
+									"        console.log(\"The card is now in list ID: \" + jsonData.idList);\r",
+									"    });\r",
+									"} else {\r",
+									"    // If the card was not moved, log the error\r",
+									"    console.error(\"Failed to move the card. Response: \", jsonData);\r",
+									"    pm.test(\"Card move failed\", function () {\r",
+									"        pm.expect(jsonData.idList).to.not.exist; // Ensure no idList exists for failed response\r",
+									"    });\r",
+									"    // If there is an error message in the response, log it\r",
+									"    if (jsonData.message) {\r",
+									"        console.error(\"Error Message: \" + jsonData.message);\r",
+									"    }\r",
+									"    if (jsonData.error) {\r",
+									"        console.error(\"Error Details: \" + jsonData.error);\r",
+									"    }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/cards/{{SignUpCardId}}?idList={{DoneListId}}&token={{apiToken}}&key={{apiKey}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"cards",
+								"{{SignUpCardId}}"
+							],
+							"query": [
+								{
+									"key": "idList",
+									"value": "{{DoneListId}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "\"Get key and token\" to Testing",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"SignUpCard\", pm.response.json().id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/cards/{{SignUpCardId}}?idList={{DoneListId}}&token={{apiToken}}&key={{apiKey}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"cards",
+								"{{SignUpCardId}}"
+							],
+							"query": [
+								{
+									"key": "idList",
+									"value": "{{DoneListId}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "\"Build a collection\" to Doing",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"SignUpCard\", pm.response.json().id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/cards/{{BuıildCollectionId}}?token={{apiToken}}&key={{apiKey}}&idList={{DoingListId}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"cards",
+								"{{BuıildCollectionId}}"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "idList",
+									"value": "{{DoingListId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "\"Working on Task\" to Doing",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"SignUpCard\", pm.response.json().id);\r",
+									"\r",
+									"// Check the HTTP response status\r",
+									"pm.test(\"Request sent successfully (HTTP 200)\", function () {\r",
+									"    pm.response.to.have.status(200); // Ensure the response status is 200\r",
+									"});\r",
+									"\r",
+									"// Parse the JSON response\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the card was successfully moved\r",
+									"if (pm.response.code === 200 && jsonData.idList) {\r",
+									"    console.log(\"The card was moved successfully.\");\r",
+									"    pm.test(\"The card was moved successfully\", function () {\r",
+									"        pm.expect(jsonData.idList).to.exist; // Ensure the new list ID exists\r",
+									"        console.log(\"The card is now in list ID: \" + jsonData.idList);\r",
+									"    });\r",
+									"} else {\r",
+									"    // If the card was not moved, log the error\r",
+									"    console.error(\"Failed to move the card. Response: \", jsonData);\r",
+									"    pm.test(\"Card move failed\", function () {\r",
+									"        pm.expect(jsonData.idList).to.not.exist; // Ensure no idList exists for failed response\r",
+									"    });\r",
+									"    // If there is an error message in the response, log it\r",
+									"    if (jsonData.message) {\r",
+									"        console.error(\"Error Message: \" + jsonData.message);\r",
+									"    }\r",
+									"    if (jsonData.error) {\r",
+									"        console.error(\"Error Details: \" + jsonData.error);\r",
+									"    }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.trello.com/1/cards/{{WorkingOnTaskId}}?token={{apiToken}}&key={{apiKey}}&idList={{DoingListId}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"cards",
+								"{{WorkingOnTaskId}}"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								},
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "idList",
+									"value": "{{DoingListId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Delete Board",
+			"item": [
+				{
+					"name": "Delete Board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check the HTTP response status\r",
+									"pm.test(\"Request sent successfully (HTTP 200)\", function () {\r",
+									"    pm.response.to.have.status(200); // Ensure the response status is 200\r",
+									"});\r",
+									"\r",
+									"// Parse the JSON response\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"// Check if the board was successfully closed (deleted)\r",
+									"if (pm.response.code === 200 && jsonData.closed === true) {\r",
+									"    console.log(\"The board was successfully closed (deleted).\");\r",
+									"    pm.test(\"The board was successfully closed (deleted)\", function () {\r",
+									"        pm.expect(jsonData.closed).to.be.true; // Ensure the \"closed\" field is true\r",
+									"        console.log(\"Board ID: \" + jsonData.id);\r",
+									"    });\r",
+									"} else {\r",
+									"    // If the board was not closed, log the error\r",
+									"    console.error(\"Failed to close (delete) the board. Response: \", jsonData);\r",
+									"    pm.test(\"Board deletion failed\", function () {\r",
+									"        pm.expect(jsonData.closed).to.not.exist; // Ensure the \"closed\" field does not exist in failed response\r",
+									"    });\r",
+									"    // If there is an error message in the response, log it\r",
+									"    if (jsonData.message) {\r",
+									"        console.error(\"Error Message: \" + jsonData.message);\r",
+									"    }\r",
+									"    if (jsonData.error) {\r",
+									"        console.error(\"Error Details: \" + jsonData.error);\r",
+									"    }\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "https://api.trello.com/1/boards/{{boardId}}/closed?key={{apiKey}}&token={{apiToken}}&value=true",
+							"protocol": "https",
+							"host": [
+								"api",
+								"trello",
+								"com"
+							],
+							"path": [
+								"1",
+								"boards",
+								"{{boardId}}",
+								"closed"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								},
+								{
+									"key": "value",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
